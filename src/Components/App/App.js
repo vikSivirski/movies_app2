@@ -1,7 +1,10 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { Pagination } from 'antd';
+import debounce from 'lodash.debounce'
 
 import MovieService from "../Service/MoviesService";
 import MoviesList from '../MoviesList';
+import SearchInpit from '../SearchInput';
 import Spiner from '../Spiner';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
@@ -10,6 +13,8 @@ import "./App.css"
 class App extends Component {
   state = {
     moviesData: [],
+    currentPage: 1,
+    searchQuery: "",
     isLoading: true,
     isError: false,
     isOnline: navigator.onLine,
@@ -19,7 +24,7 @@ class App extends Component {
     window.addEventListener("online", this.handleOnline);
     window.addEventListener("offline", this.handleOffline);
 
-    this.state.isOnline ? this.fetchMovies() : this.setState({isLoading: false, isError: true});
+    this.state.isOnline ? this.fetchMovies() : this.setState({ isError: true });
   }
 
   componentWillUnmount() {
@@ -32,41 +37,88 @@ class App extends Component {
   };
 
   handleOffline = () => {
-    this.setState({ isOnline: false, isError: true, moviesData: [] });
+    this.setState({ isOnline: false, isError: true });
   };
 
-  onError = (err) => {
-    this.setState({isError: true, isLoading: false});
+  onError = () => {
+    this.setState({ isError: true, isLoading: false });
   }
 
-  fetchMovies = () => {
+  fetchMovies = (page = 1) => {
+    this.setState({ isLoading: true });
+
     const moviesAPI = new MovieService();
-    const moviesList = moviesAPI.getMoviesPage(1);
-    this.setState({isError: false})
+    const moviesList = moviesAPI.getMoviesPage(page);
 
     moviesList.then(movies => {
       this.setState({
         moviesData: [...movies],
+        currentPage: page,
         isLoading: false
       })
     })
-    .catch(this.onError)
+      .catch(this.onError)
   }
 
-  render() {
-    const { moviesData, isLoading, isError, isOnline } = this.state;
-    const showError = isError || !isOnline ? <ErrorMessage isOnline={isOnline}/> : null;
-    const spiner = isLoading && !isError ? <Spiner /> : null;
-    const content = !isLoading ? <MoviesList moviesData={moviesData} /> : null;
+  searchMovies = (query, page = 1) => {
+    this.setState({ isLoading: true });
 
-    return (
-      <div className="App">
-        {showError}
-        {spiner}
-        {content}
-      </div>
-    );
+    const moviesAPI = new MovieService();
+    const moviesList = moviesAPI.getFoundMovies(query, page);
+
+    moviesList.then(movies => {
+      this.setState({
+        moviesData: [...movies],
+        currentPage: page,
+        isLoading: false
+      })
+    })
+      .catch(this.onError)
   }
+
+  handleSearchChange = (e) => {
+    const query = e.target.value;
+    this.setState({ searchQuery: query });
+
+    this.debouncedSearch(query)
+  }
+
+  debouncedSearch = debounce((query) => {
+    if (query.trim() === '') {
+      this.fetchMovies();
+    } else {
+      this.searchMovies(query)
+    }
+  }, 1000)
+
+render() {
+  const { moviesData, currentPage, isLoading, isError, isOnline } = this.state;
+
+  const showError = isError ? <ErrorMessage isOnline={isOnline} /> : null;
+  const spiner = isLoading ? <Spiner /> : null;
+  const content = !isLoading && !isError ? (
+    <React.Fragment>
+      <SearchInpit value={this.state.searchQuery} onChange={this.handleSearchChange} />
+      <MoviesList moviesData={moviesData} />
+      <Pagination
+        current={currentPage}
+        pageSize={20}
+        total={10000}
+        onChange={(page) => this.fetchMovies(page)}
+        showSizeChanger
+        onShowSizeChange={(current) => this.fetchMovies(1)}
+      />
+    </React.Fragment>
+  ) : null;
+
+  return (
+    <div className="App">
+      {spiner}
+      {showError}
+      {content}
+    </div>
+  );
+}
 }
 
 export default App;
