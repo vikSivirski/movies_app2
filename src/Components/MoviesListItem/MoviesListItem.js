@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Card, Row, Col, Image } from "antd";
+import { Card, Row, Col, Image, Rate } from "antd";
 import "antd/dist/antd";
 import { format, isValid, parseISO } from "date-fns";
 
@@ -16,7 +16,7 @@ export default class MoviesListItem extends Component {
     };
 
     render() {
-        const { title, description, posterPath, releaseDate } = this.props;
+        const { title, description, posterPath, releaseDate, genresIds, genresData, onRate, ratingValue } = this.props;
         const truncatedDescription = this.truncateText(description, 200);
 
         let formattedDate = "Unknown release date";
@@ -43,8 +43,9 @@ export default class MoviesListItem extends Component {
                     <Col span={16} style={{ paddingLeft: 40, paddingRight: 20, paddingTop: 10 }}>
                         <h2 className="film-title">{title}</h2>
                         <p className="release-date">{formattedDate}</p>
-                        <Genres />
+                        <Genres genresIds={genresIds} genresData={genresData} />
                         <p className="description">{truncatedDescription}</p>
+                        <Rate allowHalf count={10} defaultValue={0} value={ratingValue} onChange={onRate}/>
                     </Col>
                 </Row>
             </Card>

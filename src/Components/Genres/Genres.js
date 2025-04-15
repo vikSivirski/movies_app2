@@ -5,14 +5,17 @@ import "./Genres.css";
 
 export default class Genres extends Component {
   render() {
-    const genres = [{name: 'Drama'}, {name: 'Action'}]
+    const { genresIds, genresData } = this.props;
+    const matchedGenres = genresData.filter(genre => genresIds.includes(genre.id))
+      .map(genre => (
+        <Tag key={genre.id} className="genre-tag">
+          {genre.name}
+        </Tag>
+      ))
+
     return (
       <div className="genres-container">
-        {genres.map((genre) => (
-          <Tag className="genre-tag">
-            {genre.name} 
-          </Tag>
-        ))}
+        {matchedGenres}
       </div>
     );
   }
