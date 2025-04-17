@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import debounce from 'lodash.debounce'
+import debounce from 'lodash.debounce';
 
-import MoviesService from "../MoviesService/MoviesService";
+import MoviesService from '../MoviesService';
 
 const MoviesServiceContext = React.createContext();
 
@@ -12,17 +12,17 @@ class MoviesServiceProvider extends Component {
     guestSessionId: null,
     moviesData: [],
     currentPage: 1,
-    searchQuery: "",
+    searchQuery: '',
     genresData: [],
     isLoading: true,
     isError: false,
     isOnline: navigator.onLine,
-    movieRatings: {}
-  }
+    movieRatings: {},
+  };
 
   componentDidMount() {
-    window.addEventListener("online", this.handleOnline);
-    window.addEventListener("offline", this.handleOffline);
+    window.addEventListener('online', this.handleOnline);
+    window.addEventListener('offline', this.handleOffline);
 
     if (this.state.isOnline) {
       this.fetchMovies();
@@ -38,8 +38,8 @@ class MoviesServiceProvider extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("online", this.handleOnline);
-    window.removeEventListener("offline", this.handleOffline);
+    window.removeEventListener('online', this.handleOnline);
+    window.removeEventListener('offline', this.handleOffline);
   }
 
   handleOnline = () => {
@@ -52,14 +52,14 @@ class MoviesServiceProvider extends Component {
 
   onRate = (movieId, value) => {
     const { guestSessionId } = this.state;
-    this.moviesAPI.postRatingMovies(movieId, value, guestSessionId).then(response => {
+    this.moviesAPI.postRatingMovies(movieId, value, guestSessionId).then((response) => {
       console.log(`Оценка ${value} для фильма ${movieId} успешно отправлена`, response);
       this.setState((prevState) => ({
         movieRatings: {
           ...prevState.movieRatings,
-          [movieId]: value
-        }
-      }))
+          [movieId]: value,
+        },
+      }));
     });
   };
 
@@ -70,26 +70,27 @@ class MoviesServiceProvider extends Component {
   createGuestSession = () => {
     const guestSessionId = this.moviesAPI.createGuestSession();
 
-    guestSessionId.then(id => {
+    guestSessionId.then((id) => {
       this.setState({
-        guestSessionId: id
-      })
-    })
+        guestSessionId: id,
+      });
+    });
   };
 
   fetchMovies = (page = 1) => {
     this.setState({ isLoading: true });
     const moviesList = this.moviesAPI.getMoviesPage(page);
 
-    moviesList.then(movies => {
-      this.setState({
-        moviesData: [...movies],
-        currentPage: page,
-        isLoading: false
+    moviesList
+      .then((movies) => {
+        this.setState({
+          moviesData: [...movies],
+          currentPage: page,
+          isLoading: false,
+        });
       })
-    })
-      .catch(this.onError)
-  }
+      .catch(this.onError);
+  };
 
   fetchRatedMovies = (page) => {
     const { guestSessionId } = this.state;
@@ -97,61 +98,64 @@ class MoviesServiceProvider extends Component {
     this.setState({ isLoading: true });
     const ratedMoviesList = this.moviesAPI.getRatedMovies(guestSessionId, page);
 
-    ratedMoviesList.then(ratedMovies => {
-      this.setState({
-        moviesData: ratedMovies,
-        currentPage: page,
-        isLoading: false
+    ratedMoviesList
+      .then((ratedMovies) => {
+        this.setState({
+          moviesData: ratedMovies,
+          currentPage: page,
+          isLoading: false,
+        });
       })
-    })
-      .catch(error => {
-        console.error(error.message)
-        if (error.message.includes("404")) {
+      .catch((error) => {
+        console.error(error.message);
+        if (error.message.includes('404')) {
           this.setState({
+            moviesData: [],
             isLoading: false,
           });
         } else {
           this.onError();
         }
-      })
-  }
+      });
+  };
 
   fetchGenres = () => {
     const genresList = this.moviesAPI.getMoviesGenres();
-    console.log(genresList)
-    genresList.then(genres => {
+    console.log(genresList);
+    genresList.then((genres) => {
       this.setState({
-        genresData: genres
-      })
-    })
-  }
+        genresData: genres,
+      });
+    });
+  };
 
   searchMovies = (query, page = 1) => {
     this.setState({ isLoading: true });
     const moviesList = this.moviesAPI.getFoundMovies(query, page);
 
-    moviesList.then(movies => {
-      this.setState({
-        moviesData: [...movies],
-        currentPage: page,
-        isLoading: false
+    moviesList
+      .then((movies) => {
+        this.setState({
+          moviesData: [...movies],
+          currentPage: page,
+          isLoading: false,
+        });
       })
-    })
-      .catch(this.onError)
-  }
+      .catch(this.onError);
+  };
 
   handleSearchChange = (e) => {
     const query = e.target.value;
     this.setState({ searchQuery: query });
 
-    this.debouncedSearch(query)
-  }
+    this.debouncedSearch(query);
+  };
 
   debouncedSearch = debounce((query) => {
     if (query.trim() === '') {
       this.fetchMovies();
     } else {
-      this.searchMovies(query)
+      this.searchMovies(query);
     }
   }, 1000);
 
@@ -165,14 +169,13 @@ class MoviesServiceProvider extends Component {
           fetchGenres: this.fetchGenres,
           handleSearchChange: this.handleSearchChange,
           onRate: this.onRate,
-          movieRatings: this.state.movieRatings
+          movieRatings: this.state.movieRatings,
         }}
       >
         {this.props.children}
       </MoviesServiceContext.Provider>
-    )
+    );
   }
 }
 
-export { MoviesServiceProvider, MoviesServiceContext }
-
+export { MoviesServiceProvider, MoviesServiceContext };

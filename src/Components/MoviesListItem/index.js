@@ -1,2 +1,2 @@
-import MoviesListItem from "./MoviesListItem";
+import MoviesListItem from './MoviesListItem';
 export default MoviesListItem;

@@ -1,34 +1,85 @@
 .card-container {
-    min-height: 247px;
-    margin-bottom: 20px;
-    border-radius: 0;
-    overflow: hidden;
+  width: 100%;
+  min-height: 247px;
+  margin-bottom: 20px;
+  border-radius: 0;
+  overflow: hidden;
 }
-  
+
 .ant-card-body {
-    padding: 0;
+  padding: 0;
 }
-  
+
 .film-title {
-    margin: 0;
-    margin-bottom: 7px;
-    font-family: "Inter-Regular";
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: 300;
+  margin: 0;
+  margin-bottom: 7px;
+  font-family: 'Inter-Regular';
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 300;
 }
-  
+
 .release-date {
-    margin: 0;
-    margin-bottom: 7px;
-    font-family: "Inter-Regular";
-    font-size: 12px;
-    line-height: 22px;
-    color: #827e7e;
+  margin: 0;
+  margin-bottom: 7px;
+  font-family: 'Inter-Regular';
+  font-size: 12px;
+  line-height: 22px;
+  color: #827e7e;
 }
-  
+
 .description {
-    font-family: "Inter-Regular";
-    font-size: 12px;
-    line-height: 22px;
+  font-family: 'Inter-Regular';
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.poster-column {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.poster-image {
+  display: block;
+  object-fit: cover;
+  height: auto;
+  width: 100%;
+}
+
+.mobile-info {
+  display: none;
+}
+
+.desktop-info {
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .poster-wrapper {
+    max-height: 91px;
+  }
+
+  .poster-image {
+    height: 91px;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .poster-column {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .mobile-info {
+    display: block;
+  }
+
+  .desktop-info {
+    display: none;
+  }
+
+  .description {
+    margin-top: 0;
+  }
 }

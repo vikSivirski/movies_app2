@@ -1,2 +1,2 @@
-import SearchInpit from "./SearchInput";
+import SearchInpit from './SearchInput';
 export default SearchInpit;

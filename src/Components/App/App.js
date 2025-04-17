@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import { Pagination, Tabs } from 'antd';
 
-import { MoviesServiceContext } from '../../MoviesServiseContext/MoviesServiseContext';
+import { MoviesServiceContext } from '../../MoviesServiseContext';
 import MoviesList from '../MoviesList';
 import SearchInpit from '../SearchInput';
 import Spiner from '../Spiner';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import ErrorMessage from '../ErrorMessage';
 
-import "./App.css"
+import './App.css';
 
 class App extends Component {
   onTabChange = (key, fetchRatedMovies, fetchMovies) => {
     if (key === '2') {
       fetchRatedMovies();
     }
-    if(key === '1') {
+    if (key === '1') {
       fetchMovies();
     }
-  }
+  };
 
   render() {
     return (
@@ -33,50 +33,58 @@ class App extends Component {
             searchQuery,
             handleSearchChange,
             fetchMovies,
-            fetchRatedMovies
+            fetchRatedMovies,
           } = context;
 
-          const { TabPane } = Tabs
+          const { TabPane } = Tabs;
 
           const showError = isError ? <ErrorMessage isOnline={isOnline} /> : null;
           const spiner = isLoading ? <Spiner /> : null;
-          const content = !isLoading && !isError ? (
-            <React.Fragment>
-              <SearchInpit value={searchQuery} onChange={handleSearchChange} />
-              <MoviesList moviesData={moviesData} genresData={genresData} />
-              <Pagination
-                current={currentPage}
-                pageSize={20}
-                total={10000}
-                onChange={(page) => fetchMovies(page)}
-              />
-            </React.Fragment>
-          ) : null;
-          const ratedContent = !isLoading && !isError ? (
-            <React.Fragment>
-              <MoviesList moviesData={moviesData} genresData={genresData} />
-            </React.Fragment>
-          ) : null;
+          const content =
+            !isLoading && !isError ? (
+              <React.Fragment>
+                <SearchInpit value={searchQuery} onChange={handleSearchChange} />
+                <MoviesList moviesData={moviesData} genresData={genresData} />
+                <Pagination
+                  align="center"
+                  current={currentPage}
+                  defaultPageSize={20}
+                  showSizeChanger={false}
+                  total={10000}
+                  onChange={(page) => fetchMovies(page)}
+                />
+              </React.Fragment>
+            ) : null;
+          const ratedContent =
+            !isLoading && !isError ? (
+              <React.Fragment>
+                <MoviesList moviesData={moviesData} genresData={genresData} />
+              </React.Fragment>
+            ) : null;
 
           return (
             <div className="App">
-              <Tabs defaultActiveKey='1' centered onChange={(key) => this.onTabChange(key, fetchRatedMovies, fetchMovies)} >
-                <TabPane tab='Search' key='1'>
+              <Tabs
+                defaultActiveKey="1"
+                centered
+                onChange={(key) => this.onTabChange(key, fetchRatedMovies, fetchMovies)}
+              >
+                <TabPane tab="Search" key="1">
                   {spiner}
                   {showError}
                   {content}
                 </TabPane>
-                <TabPane tab='Rated' key='2'>
+                <TabPane tab="Rated" key="2">
                   {spiner}
                   {showError}
                   {ratedContent}
                 </TabPane>
               </Tabs>
             </div>
-          )
+          );
         }}
       </MoviesServiceContext.Consumer>
-    )
+    );
   }
 }
 
