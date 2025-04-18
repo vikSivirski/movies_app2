@@ -12,7 +12,7 @@
     "plugin:import/warnings",
     "prettier"
   ],
-  
+
   "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 12,

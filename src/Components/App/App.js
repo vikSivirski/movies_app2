@@ -25,12 +25,14 @@ class App extends Component {
         {(context) => {
           const {
             moviesData,
+            totalResults,
             genresData,
             currentPage,
             isLoading,
             isError,
             isOnline,
             searchQuery,
+            searchMovies,
             handleSearchChange,
             fetchMovies,
             fetchRatedMovies,
@@ -45,14 +47,16 @@ class App extends Component {
               <React.Fragment>
                 <SearchInpit value={searchQuery} onChange={handleSearchChange} />
                 <MoviesList moviesData={moviesData} genresData={genresData} />
-                <Pagination
-                  align="center"
-                  current={currentPage}
-                  defaultPageSize={20}
-                  showSizeChanger={false}
-                  total={10000}
-                  onChange={(page) => fetchMovies(page)}
-                />
+                {moviesData.length >= 20 ? (
+                  <Pagination
+                    align="center"
+                    current={currentPage}
+                    defaultPageSize={20}
+                    showSizeChanger={false}
+                    total={totalResults}
+                    onChange={(page) => searchMovies(searchQuery, page)}
+                  />
+                ) : null}
               </React.Fragment>
             ) : null;
           const ratedContent =

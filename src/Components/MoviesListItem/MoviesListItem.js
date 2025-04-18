@@ -21,9 +21,11 @@ export default class MoviesListItem extends Component {
     const truncatedDescription = this.truncateText(description, 200);
 
     let formattedDate = 'Unknown release date';
-    const date = parseISO(releaseDate);
-    if (isValid(date)) {
-      formattedDate = format(date, 'dd MMM yyyy');
+    if (releaseDate) {
+      const date = parseISO(releaseDate);
+      if (isValid(date)) {
+        formattedDate = format(date, 'dd MMM yyyy');
+      }
     }
 
     return (

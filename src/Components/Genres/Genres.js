@@ -6,8 +6,12 @@ import './Genres.css';
 export default class Genres extends Component {
   render() {
     const { genresIds, genresData } = this.props;
-    const matchedGenres = genresData
-      .filter((genre) => genresIds.includes(genre.id))
+
+    const safeGenresIds = Array.isArray(genresIds) ? genresIds : [];
+    const safeGenresData = Array.isArray(genresData) ? genresData : [];
+
+    const matchedGenres = safeGenresData
+      .filter((genre) => safeGenresIds.includes(genre.id))
       .map((genre) => (
         <Tag key={genre.id} className="genre-tag">
           {genre.name}

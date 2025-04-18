@@ -11,6 +11,7 @@ class MoviesServiceProvider extends Component {
   state = {
     guestSessionId: null,
     moviesData: [],
+    totalResults: 10000,
     currentPage: 1,
     searchQuery: '',
     genresData: [],
@@ -85,6 +86,7 @@ class MoviesServiceProvider extends Component {
       .then((movies) => {
         this.setState({
           moviesData: [...movies],
+          totalResults: 10000,
           currentPage: page,
           isLoading: false,
         });
@@ -132,16 +134,18 @@ class MoviesServiceProvider extends Component {
   searchMovies = (query, page = 1) => {
     this.setState({ isLoading: true });
     const moviesList = this.moviesAPI.getFoundMovies(query, page);
-
-    moviesList
-      .then((movies) => {
-        this.setState({
-          moviesData: [...movies],
-          currentPage: page,
-          isLoading: false,
-        });
-      })
-      .catch(this.onError);
+    query === ''
+      ? this.fetchMovies(page)
+      : moviesList
+          .then((movies) => {
+            this.setState({
+              moviesData: [...movies.results],
+              totalResults: movies.total_results,
+              currentPage: page,
+              isLoading: false,
+            });
+          })
+          .catch(this.onError);
   };
 
   handleSearchChange = (e) => {
@@ -167,6 +171,7 @@ class MoviesServiceProvider extends Component {
           fetchMovies: this.fetchMovies,
           fetchRatedMovies: this.fetchRatedMovies,
           fetchGenres: this.fetchGenres,
+          searchMovies: this.searchMovies,
           handleSearchChange: this.handleSearchChange,
           onRate: this.onRate,
           movieRatings: this.state.movieRatings,
