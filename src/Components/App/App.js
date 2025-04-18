@@ -47,7 +47,7 @@ class App extends Component {
               <React.Fragment>
                 <SearchInpit value={searchQuery} onChange={handleSearchChange} />
                 <MoviesList moviesData={moviesData} genresData={genresData} />
-                {moviesData.length >= 20 && totalResults !== 0 ? (
+                {totalResults > 20 ? (
                   <Pagination
                     align="center"
                     current={currentPage}
